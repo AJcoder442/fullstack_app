@@ -23,22 +23,24 @@ jobs:
           command_timeout: 10m
           script: |
             set -e
-          
+            
             echo "📁 Checking project directory..."
-          
+            
             if [ -d "~/fullstack/.git" ]; then
               cd ~/fullstack
               echo "🔄 Pulling latest code..."
               git pull origin main
+              # Clean node_modules that may have permission issues
+              rm -rf node_modules package-lock.json
             else
               echo "⬇️ Cloning repository..."
               rm -rf ~/fullstack
-              git clone https://github.com/AJcoder442/fullstack_app.git fullstack
-              cd fullstack
+              git clone https://github.com/AJcoder442/fullstack_app.git ~/fullstack
+              cd ~/fullstack
             fi
-          
+            
             echo "🐳 Restarting Docker containers..."
             docker-compose down || true
             docker-compose up -d --build
-        
+            
             echo "✅ Deployment successful!"
