@@ -23,14 +23,27 @@ jobs:
           command_timeout: 10m
           script: |
             set -e
-          
-            cd ~/fullstack
+
+            echo "📁 Checking project directory..."
             
-            echo "🔧 Fixing permissions..."
-            sudo chown -R ec2-user:ec2-user ~/fullstack
+            if [ -d "~/fullstack/.git" ]; then
+              cd ~/fullstack
             
-            echo "📥 Pulling latest code..."
-            git pull origin main
+              echo "🔧 Fixing permissions..."
+              sudo chown -R ec2-user:ec2-user ~/fullstack
+            
+              echo "🔄 Pulling latest code..."
+              git pull origin main
+            
+            else
+              echo "⬇️ No repo found, cloning fresh..."
+            
+              rm -rf ~/fullstack
+            
+              git clone https://github.com/AJcoder442/fullstack_app.git ~/fullstack
+            
+              cd ~/fullstack
+            fi
             
             echo "🐳 Restarting Docker..."
             docker-compose down || true
